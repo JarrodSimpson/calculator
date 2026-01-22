@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+
+    <!-- CSS: This section controls how the calculator LOOKS -->
+    <style>
+        /* Style the whole page */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        /* The calculator container */
+        .calculator {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* The display screen */
+        .display {
+            background-color: #222;
+            color: white;
+            font-size: 2rem;
+            padding: 20px;
+            text-align: right;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            min-height: 30px;
+            word-wrap: break-word;
+        }
+
+        /* Grid layout for buttons */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 70px);
+            gap: 10px;
+        }
+
+        /* All buttons */
+        button {
+            width: 70px;
+            height: 70px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* Number buttons */
+        .number {
+            background-color: #4a4a4a;
+            color: white;
+        }
+
+        .number:hover {
+            background-color: #5a5a5a;
+        }
+
+        /* Operator buttons (+, -, *, /) */
+        .operator {
+            background-color: #ff9500;
+            color: white;
+        }
+
+        .operator:hover {
+            background-color: #ffaa33;
+        }
+
+        /* Clear button */
+        .clear {
+            background-color: #ff3b30;
+            color: white;
+        }
+
+        .clear:hover {
+            background-color: #ff5545;
+        }
+
+        /* Equals button */
+        .equals {
+            background-color: #34c759;
+            color: white;
+        }
+
+        .equals:hover {
+            background-color: #45d96a;
+        }
+
+        /* Make the 0 button span 2 columns */
+        .zero {
+            grid-column: span 2;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML: This section defines the STRUCTURE -->
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            <button class="operator" onclick="deleteLast()">←</button>
+
+            <button class="number" onclick="appendToDisplay('7')">7</button>
+            <button class="number" onclick="appendToDisplay('8')">8</button>
+            <button class="number" onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+
+            <button class="number" onclick="appendToDisplay('4')">4</button>
+            <button class="number" onclick="appendToDisplay('5')">5</button>
+            <button class="number" onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+
+            <button class="number" onclick="appendToDisplay('1')">1</button>
+            <button class="number" onclick="appendToDisplay('2')">2</button>
+            <button class="number" onclick="appendToDisplay('3')">3</button>
+            <button class="equals" onclick="calculate()">=</button>
+
+            <button class="number zero" onclick="appendToDisplay('0')">0</button>
+            <button class="number" onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: This section makes it INTERACTIVE -->
+    <script>
+        // Variable to store what's shown on the display
+        let currentInput = '0';
+
+        // Get a reference to the display element
+        const display = document.getElementById('display');
+
+        // Function: Add a character to the display
+        function appendToDisplay(value) {
+            // If display shows just "0", replace it (unless adding a decimal)
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            display.textContent = currentInput;
+        }
+
+        // Function: Clear the display
+        function clearDisplay() {
+            currentInput = '0';
+            display.textContent = '0';
+        }
+
+        // Function: Delete the last character
+        function deleteLast() {
+            if (currentInput.length === 1) {
+                currentInput = '0';
+            } else {
+                currentInput = currentInput.slice(0, -1);
+            }
+            display.textContent = currentInput;
+        }
+
+        // Function: Calculate the result
+        function calculate() {
+            try {
+                // eval() computes the math expression as a string
+                // Note: eval() is fine for a learning project, but avoid in production
+                let result = eval(currentInput);
+
+                // Handle division by zero
+                if (!isFinite(result)) {
+                    display.textContent = 'Error';
+                    currentInput = '0';
+                    return;
+                }
+
+                // Round to avoid floating point issues (e.g., 0.1 + 0.2)
+                result = Math.round(result * 1000000) / 1000000;
+
+                currentInput = result.toString();
+                display.textContent = currentInput;
+            } catch (error) {
+                // If the expression is invalid, show error
+                display.textContent = 'Error';
+                currentInput = '0';
+            }
+        }
+    </script>
+
+</body>
+</html>
